@@ -16,10 +16,45 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include "SvgParser.hxx"
+#include "util/SystemError.hxx"
+#include "util/ScopeExit.hxx"
+
 #include <stdexcept>
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <fcntl.h>
+
+static void
+FeedFile(SvgParser &parser, int fd)
+{
+	while (true) {
+		char buffer[8192];
+		ssize_t nbytes = read(fd, buffer, sizeof(buffer));
+		if (nbytes < 0)
+			throw MakeErrno("Failed to read file");
+
+		if (nbytes == 0)
+			break;
+
+		parser.Parse(buffer, nbytes, false);
+	}
+
+	parser.Parse("", 0, true);
+}
+
+static void
+FeedFile(SvgParser &parser, const char *path)
+{
+	int fd = open(path, O_RDONLY);
+	if (fd < 0)
+		throw FormatErrno("Failed to open %s", path);
+
+	AtScopeExit(fd) { close(fd); };
+	FeedFile(parser, fd);
+}
 
 int
 main(int argc, char **argv)
@@ -32,8 +67,10 @@ try {
 	const auto in_path = argv[1];
 	const auto out_path = argv[2];
 
-	(void)in_path;
 	(void)out_path;
+
+	SvgParser parser;
+	FeedFile(parser, in_path);
 
 	return EXIT_SUCCESS;
 } catch (const std::exception &e) {

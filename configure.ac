@@ -17,6 +17,13 @@ dnl Checks for OS features
 AC_SYS_LARGEFILE
 
 dnl
+dnl Checks for libraries
+dnl
+
+PKG_CHECK_MODULES([EXPAT], [expat],,
+	[AC_MSG_ERROR([expat not found])])
+
+dnl
 dnl CFLAGS
 dnl
 
