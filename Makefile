@@ -13,5 +13,5 @@ clean:
 svg2pes: $(SOURCES:.cxx=.o)
 	$(CXX) -o $@ $^ $(LDFLAGS) $(CXXFLAGS)
 
-%.o: %.cxx
+%.o: %.cxx $(wildcard src/*.hxx src/*.h)
 	$(CXX) -c -o $@ $< $(CXXFLAGS) $(CPPFLAGS)
