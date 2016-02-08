@@ -17,6 +17,7 @@
  */
 
 #include "SvgParser.hxx"
+#include "PesWriter.hxx"
 #include "util/SystemError.hxx"
 #include "util/ScopeExit.hxx"
 
@@ -56,6 +57,28 @@ FeedFile(SvgParser &parser, const char *path)
 	FeedFile(parser, fd);
 }
 
+static void
+WriteFile(int fd, ConstBuffer<uint8_t> src)
+{
+	ssize_t nbytes = write(fd, src.data, src.size);
+	if (nbytes < 0)
+		throw MakeErrno("Failed to write file");
+
+	if (size_t(nbytes) != src.size)
+		throw std::runtime_error("Short write to file");
+}
+
+static void
+WriteFile(const char *path, ConstBuffer<uint8_t> src)
+{
+	int fd = open(path, O_WRONLY|O_CREAT|O_TRUNC, 0666);
+	if (fd < 0)
+		throw FormatErrno("Failed to create %s", path);
+
+	AtScopeExit(fd) { close(fd); };
+	WriteFile(fd, src);
+}
+
 int
 main(int argc, char **argv)
 try {
@@ -71,6 +94,10 @@ try {
 
 	SvgParser parser;
 	FeedFile(parser, in_path);
+
+	PesWriter writer;
+
+	WriteFile(out_path, writer.Finish());
 
 	return EXIT_SUCCESS;
 } catch (const std::exception &e) {

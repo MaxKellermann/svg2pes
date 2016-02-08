@@ -16,6 +16,7 @@ svg2pes_SOURCES = \
 	src/util/WritableBuffer.hxx \
 	src/ExpatParser.cxx src/ExpatParser.hxx \
 	src/SvgParser.cxx src/SvgParser.hxx \
+	src/PesWriter.cxx src/PesWriter.hxx \
 	src/Main.cxx
 svg2pes_CPPFLAGS = $(AM_CPPFLAGS) $(EXPAT_CFLAGS)
 svg2pes_LDADD = $(AM_LDADD) $(EXPAT_LIBS)
