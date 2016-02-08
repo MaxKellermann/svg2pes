@@ -21,7 +21,75 @@
 
 #include "ExpatParser.hxx"
 
+#include <forward_list>
+#include <vector>
+
+struct SvgPoint {
+	double x, y;
+
+	SvgPoint() = default;
+	constexpr SvgPoint(double _x, double _y)
+		:x(_x), y(_y) {}
+
+	constexpr SvgPoint operator+(SvgPoint other) const {
+		return {x + other.x, y + other.y};
+	}
+
+	constexpr SvgPoint operator-(SvgPoint other) const {
+		return {x - other.x, y - other.y};
+	}
+
+	SvgPoint &operator+=(SvgPoint other) {
+		x += other.x;
+		y += other.y;
+		return *this;
+	}
+};
+
+struct SvgVertex : SvgPoint {
+	enum class Type {
+		MOVE,
+		LINE,
+		ARC,
+		CURVE,
+	} type;
+
+	constexpr SvgVertex(Type _type, SvgPoint _p):SvgPoint(_p), type(_type) {}
+
+	constexpr SvgVertex(Type _type, double _x, double _y):SvgPoint(_x, _y), type(_type) {}
+};
+
+struct SvgPath {
+	std::vector<SvgVertex> points;
+};
+
 class SvgParser final : public CommonExpatParser {
+	typedef std::forward_list<SvgPath> PathList;
+	PathList paths;
+
+	struct Group {
+		std::string transform;
+		PathList::iterator end;
+
+		Group(const char *_transform, PathList::iterator _end)
+			:transform(_transform), end(_end) {}
+	};
+
+	std::forward_list<Group> groups;
+
+public:
+	const std::forward_list<SvgPath> &GetPaths() const {
+		return paths;
+	}
+
+private:
+	void BeginTransform(const char *transform);
+	void EndTransform();
+
+	void ParsePath(const char *d);
+	void ParseRect(const char *x, const char *y,
+		       const char *width, const char *height);
+
 protected:
 	void StartElement(const XML_Char *name,
 			  const XML_Char **atts) override;
