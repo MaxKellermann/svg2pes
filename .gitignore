@@ -1,3 +1,14 @@
 /svg2pes
 *.o
 *~
+/autom4te.cache/
+/aclocal.m4
+/build/
+/config.log
+/config.status
+.deps/
+.dirstamp
+/configure
+/Makefile.in
+/Makefile
+/confdefs.h
