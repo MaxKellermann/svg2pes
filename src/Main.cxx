@@ -79,6 +79,21 @@ WriteFile(const char *path, ConstBuffer<uint8_t> src)
 	WriteFile(fd, src);
 }
 
+static void
+SvgToPes(PesWriter &pes, const SvgParser &svg)
+{
+	SvgPoint cursor(0, 0);
+
+	for (const auto &path : svg.GetPaths()) {
+		//pes.ColorChange(0);
+		for (const auto &point : path.points) {
+			auto relative = point - cursor;
+			pes.Stitch(relative.x, relative.y);
+			cursor = point;
+		}
+	}
+}
+
 int
 main(int argc, char **argv)
 try {
@@ -96,7 +111,7 @@ try {
 	FeedFile(parser, in_path);
 
 	PesWriter writer;
-
+	SvgToPes(writer, parser);
 	WriteFile(out_path, writer.Finish());
 
 	return EXIT_SUCCESS;
