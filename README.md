@@ -24,3 +24,10 @@ Quick walkthrough:
 This project uses
 [autotools](https://en.wikipedia.org/wiki/GNU_build_system).  If you
 know autotools, you know how to tweak the build process.
+
+## Using svg2pes
+
+    svg2pes test.svg test.pes
+
+This command reads the file `test.svg` and then writes the file
+`test.pes`.
