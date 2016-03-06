@@ -8,7 +8,7 @@ project's goal is to be able to author
 with [Inkscape](https://inkscape.org/).
 
 It is something like the opposite of
-[pesconvert](https://git.kernel.org/cgit/linux/kernel/git/torvalds/pesconvert.git) (
+[pesconvert](https://git.kernel.org/cgit/linux/kernel/git/torvalds/pesconvert.git).
 
 This is work in progress.
 
