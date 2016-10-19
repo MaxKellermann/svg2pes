@@ -88,8 +88,8 @@ SvgToPes(PesWriter &pes, const SvgParser &svg)
 		//pes.ColorChange(0);
 		for (const auto &point : path.points) {
 			auto relative = point - cursor;
-			pes.Stitch(relative.x, relative.y);
-			cursor = point;
+			pes.Stitch(round(relative.x), round(relative.y));
+			cursor += SvgPoint(int(round(relative.x)), int(round(relative.y)));
 		}
 	}
 }
