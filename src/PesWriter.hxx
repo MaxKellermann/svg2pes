@@ -73,7 +73,19 @@ public:
 	}
 
 	void Stitch(int x, int y) {
-		GenerateWrite(PesStitch, x, y);
+		if(x<63 && x>-64 && y<63 && y>-64) {
+			//Regular stitch
+			GenerateWrite(PesStitch, x, y);
+		} else {
+			//Jump stitch
+			x+=x<0?0x1000:0;
+			y+=y<0?0x1000:0;
+			x&=0x7FF;
+			y&=0x7FF;
+			x|=0x800;
+			y|=0x800;
+			GenerateWrite(PesStitch, x, y);
+		}
 	}
 
 	void End() {
