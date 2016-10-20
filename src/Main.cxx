@@ -91,6 +91,14 @@ SvgToPes(PesWriter &pes, const SvgParser &svg)
 			auto relative = point - cursor;
 			auto deltax = round(relative.x);
 			auto deltay = round(relative.y);
+			while(!(deltax>-2048 && deltax<2048
+				&& deltay>-2048 && deltay<2048)) {
+				if(deltax<-2048) {pes.Stitch(-2048,0);deltax+=2048;cursor += SvgPoint(-2048,0);}
+				if(deltax>2047) {pes.Stitch(2047,0);deltax-=2047;cursor += SvgPoint(2047,0);}
+				if(deltay<-2048) {pes.Stitch(0,-2048);deltay+=2048;cursor += SvgPoint(0,-2048);}
+				if(deltay>2047) {pes.Stitch(0,2047);deltay-=2047;cursor += SvgPoint(0,2047);}
+				}
+				printf("(%lf, %lf)\n",deltax,deltay);
 			pes.Stitch(deltax,deltay);
 			cursor += SvgPoint(deltax,deltay);
 		}
