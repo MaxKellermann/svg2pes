@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <math.h>
 
 static void
 FeedFile(SvgParser &parser, int fd)
@@ -88,8 +89,10 @@ SvgToPes(PesWriter &pes, const SvgParser &svg)
 		//pes.ColorChange(0);
 		for (const auto &point : path.points) {
 			auto relative = point - cursor;
-			pes.Stitch(round(relative.x), round(relative.y));
-			cursor += SvgPoint(int(round(relative.x)), int(round(relative.y)));
+			auto deltax = round(relative.x);
+			auto deltay = round(relative.y);
+			pes.Stitch(deltax,deltay);
+			cursor += SvgPoint(deltax,deltay);
 		}
 	}
 }

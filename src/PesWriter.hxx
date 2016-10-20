@@ -78,13 +78,8 @@ public:
 			GenerateWrite(PesStitch, x, y);
 		} else {
 			//Jump stitch
-			x+=x<0?0x1000:0;
-			y+=y<0?0x1000:0;
-			x&=0x7FF;
-			y&=0x7FF;
-			x|=0x800;
-			y|=0x800;
-			GenerateWrite(PesStitch, x, y);
+			JumpStitch(x);
+			JumpStitch(y);
 		}
 	}
 
