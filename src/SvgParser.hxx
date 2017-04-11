@@ -51,6 +51,7 @@ struct SvgVertex : SvgPoint {
 		MOVE,
 		LINE,
 		ARC,
+		QUADRATIC_CURVE,
 		CUBIC_CURVE,
 	} type;
 
