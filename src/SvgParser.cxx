@@ -72,9 +72,8 @@ ParsePoint(const SvgPoint cursor, bool relative, const char *&d)
 {
 	SvgPoint p;
 	p.x = ParseDouble(d);
-	if (*d != ',')
-		throw std::runtime_error("Comma expected");
-	++d;
+	if (*d == ',')
+		++d;
 	p.y = ParseDouble(d);
 
 	if (relative)
