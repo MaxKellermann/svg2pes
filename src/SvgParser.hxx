@@ -51,7 +51,7 @@ struct SvgVertex : SvgPoint {
 		MOVE,
 		LINE,
 		ARC,
-		CURVE,
+		CUBIC_CURVE,
 	} type;
 
 	constexpr SvgVertex(Type _type, SvgPoint _p):SvgPoint(_p), type(_type) {}

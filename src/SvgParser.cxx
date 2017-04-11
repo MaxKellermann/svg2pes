@@ -140,7 +140,7 @@ SvgPathParser::ParseVertex(SvgVertex::Type type, bool relative, const char *&d)
 		ParsePoint(cursor, relative, d);
 		break;
 
-	case SvgVertex::Type::CURVE:
+	case SvgVertex::Type::CUBIC_CURVE:
 		ParsePoint(cursor, relative, d);
 		ParsePoint(cursor, relative, d);
 		points.emplace_back(type, ParsePoint(cursor, relative, d));
@@ -195,13 +195,13 @@ SvgPathParser::Parse(const char *d)
 			break;
 
 		case 'C':
-			type = SvgVertex::Type::CURVE;
+			type = SvgVertex::Type::CUBIC_CURVE;
 			relative = false;
 			++d;
 			break;
 
 		case 'c':
-			type = SvgVertex::Type::CURVE;
+			type = SvgVertex::Type::CUBIC_CURVE;
 			relative = true;
 			++d;
 			break;
