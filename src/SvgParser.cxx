@@ -194,8 +194,6 @@ SvgPathParser::Parse(const char *d)
 			ParseVertex(type, relative, d);
 		}
 	}
-
-	(void)relative;
 }
 
 inline void
