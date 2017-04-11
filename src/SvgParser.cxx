@@ -71,7 +71,7 @@ static SvgPoint
 ParsePoint(const SvgPoint cursor, bool relative, const char *&d)
 {
 	SvgPoint p;
-	double SCALE = 25.4*10/90; //SVG 90DPI and PES 10 points per mm
+	constexpr double SCALE = 25.4*10/90; //SVG 90DPI and PES 10 points per mm
 	p.x = ParseDouble(d)*SCALE;
 	if (*d != ',')
 		throw std::runtime_error("Comma expected");
