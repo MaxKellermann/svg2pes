@@ -82,6 +82,34 @@ ParsePoint(const SvgPoint cursor, bool relative, const char *&d)
 	return p;
 }
 
+static SvgPoint
+ParseHorizontal(const SvgPoint cursor, bool relative, const char *&d)
+{
+	auto value = ParseDouble(d);
+
+	SvgPoint p = cursor;
+	if (relative)
+		p.x += value;
+	else
+		p.x = value;
+
+	return p;
+}
+
+static SvgPoint
+ParseVertical(const SvgPoint cursor, bool relative, const char *&d)
+{
+	auto value = ParseDouble(d);
+
+	SvgPoint p = cursor;
+	if (relative)
+		p.y += value;
+	else
+		p.y = value;
+
+	return p;
+}
+
 class SvgPathParser : public SvgPath {
 	SvgPoint cursor{0, 0};
 
@@ -176,6 +204,34 @@ SvgPathParser::Parse(const char *d)
 			type = SvgVertex::Type::CURVE;
 			relative = true;
 			++d;
+			break;
+
+		case 'H':
+			++d;
+			points.emplace_back(SvgVertex::Type::LINE,
+					    ParseHorizontal(cursor, false, d));
+			cursor = points.back();
+			break;
+
+		case 'h':
+			++d;
+			points.emplace_back(SvgVertex::Type::LINE,
+					    ParseHorizontal(cursor, true, d));
+			cursor = points.back();
+			break;
+
+		case 'V':
+			++d;
+			points.emplace_back(SvgVertex::Type::LINE,
+					    ParseVertical(cursor, false, d));
+			cursor = points.back();
+			break;
+
+		case 'v':
+			++d;
+			points.emplace_back(SvgVertex::Type::LINE,
+					    ParseVertical(cursor, true, d));
+			cursor = points.back();
 			break;
 
 		case 'z':
