@@ -1,5 +1,5 @@
 AC_PREREQ(2.60)
-AC_INIT(svg2pes, 0.1, max@duempel.org)
+AC_INIT(svg2pes, 0.1, max.kellermann@gmail.com)
 AC_CONFIG_SRCDIR(src/Main.cxx)
 AC_CONFIG_AUX_DIR(build)
 AC_CONFIG_MACRO_DIR([m4])
