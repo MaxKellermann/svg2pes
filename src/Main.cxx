@@ -80,26 +80,63 @@ WriteFile(const char *path, ConstBuffer<uint8_t> src)
 	WriteFile(fd, src);
 }
 
+/**
+ * A point in a PES file.
+ */
+struct PesPoint {
+	int x, y;
+
+	PesPoint() = default;
+	constexpr PesPoint(int _x, int _y)
+		:x(_x), y(_y) {}
+
+	/**
+	 * Import from a SVG point, scaling to PES coordinates.
+	 */
+	constexpr PesPoint(SvgPoint src):x(FromSvg(src.x)), y(FromSvg(src.y)) {}
+
+	constexpr PesPoint operator+(PesPoint other) const {
+		return {x + other.x, y + other.y};
+	}
+
+	constexpr PesPoint operator-(PesPoint other) const {
+		return {x - other.x, y - other.y};
+	}
+
+	PesPoint &operator+=(PesPoint other) {
+		x += other.x;
+		y += other.y;
+		return *this;
+	}
+
+private:
+	static constexpr int FromSvg(double value) {
+		constexpr double SCALE = 25.4*10/90; //SVG 90DPI and PES 10 points per mm
+		return lround(value * SCALE);
+	}
+};
+
 static void
 SvgToPes(PesWriter &pes, const SvgParser &svg)
 {
-	SvgPoint cursor(0, 0);
+	PesPoint cursor(0, 0);
 
 	for (const auto &path : svg.GetPaths()) {
 		//pes.ColorChange(0);
-		for (const auto &point : path.points) {
+		for (const auto &svg_point : path.points) {
+			const PesPoint point(svg_point);
 			auto relative = point - cursor;
-			auto deltax = round(relative.x);
-			auto deltay = round(relative.y);
+			auto deltax = relative.x;
+			auto deltay = relative.y;
 			while(!(deltax>-2048 && deltax<2048
 				&& deltay>-2048 && deltay<2048)) {
-				if(deltax<-2048) {pes.Stitch(-2048,0);deltax+=2048;cursor += SvgPoint(-2048,0);}
-				if(deltax>2047) {pes.Stitch(2047,0);deltax-=2047;cursor += SvgPoint(2047,0);}
-				if(deltay<-2048) {pes.Stitch(0,-2048);deltay+=2048;cursor += SvgPoint(0,-2048);}
-				if(deltay>2047) {pes.Stitch(0,2047);deltay-=2047;cursor += SvgPoint(0,2047);}
+				if(deltax<-2048) {pes.Stitch(-2048,0);deltax+=2048;cursor += PesPoint(-2048,0);}
+				if(deltax>2047) {pes.Stitch(2047,0);deltax-=2047;cursor += PesPoint(2047,0);}
+				if(deltay<-2048) {pes.Stitch(0,-2048);deltay+=2048;cursor += PesPoint(0,-2048);}
+				if(deltay>2047) {pes.Stitch(0,2047);deltay-=2047;cursor += PesPoint(0,2047);}
 				}
 			pes.Stitch(deltax,deltay);
-			cursor += SvgPoint(deltax,deltay);
+			cursor += PesPoint(deltax, deltay);
 		}
 	}
 }
