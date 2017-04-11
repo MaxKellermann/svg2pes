@@ -78,7 +78,7 @@ class SvgParser final : public CommonExpatParser {
 	std::forward_list<Group> groups;
 
 public:
-	const std::forward_list<SvgPath> &GetPaths() const {
+	const PathList &GetPaths() const {
 		return paths;
 	}
 
