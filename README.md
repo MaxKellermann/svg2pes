@@ -14,6 +14,11 @@ This is work in progress.
 
 ## Building svg2pes
 
+You need:
+
+- a C++14 compiler (GCC 5+ or clang)
+- expat (`libexpat1-dev` on Debian)
+
 Quick walkthrough:
 
     ./autogen.sh
