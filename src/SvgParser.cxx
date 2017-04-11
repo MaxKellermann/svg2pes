@@ -152,6 +152,17 @@ SvgPathParser::ParseVertex(SvgVertex::Type type, bool relative, const char *&d)
 		points.emplace_back(type, ParsePoint(cursor, relative, d));
 		cursor = points.back();
 		break;
+
+	case SvgVertex::Type::SMOOTH_QUADRATIC_CURVE:
+		points.emplace_back(type, ParsePoint(cursor, relative, d));
+		cursor = points.back();
+		break;
+
+	case SvgVertex::Type::SMOOTH_CUBIC_CURVE:
+		ParsePoint(cursor, relative, d);
+		points.emplace_back(type, ParsePoint(cursor, relative, d));
+		cursor = points.back();
+		break;
 	}
 }
 
@@ -220,6 +231,30 @@ SvgPathParser::Parse(const char *d)
 
 		case 'c':
 			type = SvgVertex::Type::CUBIC_CURVE;
+			relative = true;
+			++d;
+			break;
+
+		case 'T':
+			type = SvgVertex::Type::SMOOTH_QUADRATIC_CURVE;
+			relative = false;
+			++d;
+			break;
+
+		case 't':
+			type = SvgVertex::Type::SMOOTH_QUADRATIC_CURVE;
+			relative = true;
+			++d;
+			break;
+
+		case 'S':
+			type = SvgVertex::Type::SMOOTH_CUBIC_CURVE;
+			relative = false;
+			++d;
+			break;
+
+		case 's':
+			type = SvgVertex::Type::SMOOTH_CUBIC_CURVE;
 			relative = true;
 			++d;
 			break;

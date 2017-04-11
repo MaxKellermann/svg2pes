@@ -53,6 +53,8 @@ struct SvgVertex : SvgPoint {
 		ARC,
 		QUADRATIC_CURVE,
 		CUBIC_CURVE,
+		SMOOTH_QUADRATIC_CURVE,
+		SMOOTH_CUBIC_CURVE,
 	} type;
 
 	constexpr SvgVertex(Type _type, SvgPoint _p):SvgPoint(_p), type(_type) {}
