@@ -34,6 +34,18 @@ PesColorChange(uint8_t *p, unsigned color)
 	return p;
 }
 
+inline constexpr bool
+PesCheckSmallStitch(int delta)
+{
+	return delta >= -64 && delta <= 63;
+}
+
+inline constexpr bool
+PesCheckSmallStitch(int x, int y)
+{
+	return PesCheckSmallStitch(x) && PesCheckSmallStitch(y);
+}
+
 /**
  * A "big" stitch in the range (-2048..2047).
  */
@@ -91,7 +103,7 @@ public:
 	}
 
 	void Stitch(int x, int y) {
-		if(x<63 && x>-64 && y<63 && y>-64) {
+		if (PesCheckSmallStitch(x, y)) {
 			SmallStitch(x, y);
 		} else {
 			BigStitch(x, y);
