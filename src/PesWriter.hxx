@@ -82,14 +82,17 @@ public:
 		GenerateWrite(PesColorChange, color);
 	}
 
+	void SmallStitch(int x, int y) {
+		GenerateWrite(PesSmallStitch, x, y);
+	}
+
 	void BigStitch(int x, int y) {
 		GenerateWrite(PesBigStitch, x, y, false, false);
 	}
 
 	void Stitch(int x, int y) {
 		if(x<63 && x>-64 && y<63 && y>-64) {
-			//Regular stitch
-			GenerateWrite(PesSmallStitch, x, y);
+			SmallStitch(x, y);
 		} else {
 			BigStitch(x, y);
 		}
