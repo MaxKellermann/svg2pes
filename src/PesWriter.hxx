@@ -34,16 +34,22 @@ PesColorChange(uint8_t *p, unsigned color)
 	return p;
 }
 
+/**
+ * A "big" stitch in the range (-2048..2047).
+ */
 static inline uint8_t *
-PesJumpStitch(uint8_t *p, int length)
+PesBigStitch(uint8_t *p, int length)
 {
 	*p++ = 0x80 | ((length >> 8) & 0xf);
 	*p++ = length & 0xff;
 	return p;
 }
 
+/**
+ * A "small" stitch in the range (-64..63).
+ */
 static inline uint8_t *
-PesStitch(uint8_t *p, int x, int y)
+PesSmallStitch(uint8_t *p, int x, int y)
 {
 	*p++ = x & 0x7f;
 	*p++ = y & 0x7f;
@@ -68,18 +74,17 @@ public:
 		GenerateWrite(PesColorChange, color);
 	}
 
-	void JumpStitch(int length) {
-		GenerateWrite(PesJumpStitch, length);
+	void BigStitch(int length) {
+		GenerateWrite(PesBigStitch, length);
 	}
 
 	void Stitch(int x, int y) {
 		if(x<63 && x>-64 && y<63 && y>-64) {
 			//Regular stitch
-			GenerateWrite(PesStitch, x, y);
+			GenerateWrite(PesSmallStitch, x, y);
 		} else {
-			//Jump stitch
-			JumpStitch(x);
-			JumpStitch(y);
+			BigStitch(x);
+			BigStitch(y);
 		}
 	}
 
