@@ -110,8 +110,12 @@ public:
 		GenerateWrite(PesSmallStitch, x, y);
 	}
 
+	void BigStitch(int x, int y, bool jump, bool trim) {
+		GenerateWrite(PesBigStitch, x, y, jump, trim);
+	}
+
 	void BigStitch(int x, int y) {
-		GenerateWrite(PesBigStitch, x, y, false, false);
+		BigStitch(x, y, false, false);
 	}
 
 	void Stitch(int x, int y) {
