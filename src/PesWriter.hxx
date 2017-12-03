@@ -122,6 +122,34 @@ public:
 		}
 	}
 
+	/**
+	 * Stitch a line to the given relative position.  If the
+	 * dimensions exceed the encodable PES limits even for a "big"
+	 * stitch command, multiple stitch commands are emitted.
+	 */
+	void StitchLine(int x, int y) {
+		while (!PesCheckBigStitch(x, y)) {
+			int step_x = 0, step_y = 0;
+
+			if (x < -2048)
+				step_x = -2048;
+			else if (x > 2047)
+				step_x = 2047;
+
+			if (y < -2048)
+				step_y = -2048;
+			else if (y > 2047)
+				step_y = 2047;
+
+			BigStitch(step_x, step_y);
+
+			x -= step_x;
+			y -= step_y;
+		}
+
+		Stitch(x, y);
+	}
+
 	void End() {
 		GenerateWrite(PesEnd);
 	}
