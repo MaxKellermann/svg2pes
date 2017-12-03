@@ -19,6 +19,7 @@
 #include "SvgParser.hxx"
 #include "SvgData.hxx"
 #include "SvgMatrix.hxx"
+#include "SvgArc.hxx"
 
 #include <stdexcept>
 
@@ -186,12 +187,12 @@ SvgPathParser::ParseVertex(SvgVertex::Type type, bool relative, const char *&d)
 
 			SvgPoint end = ParsePoint(cursor, relative, d);
 
-			(void)radius;
-			(void)rotation;
-			(void)large_arc;
-			(void)sweep;
-			points.emplace_back(type, end);
+			SvgArcToLines(*this, cursor, radius, rotation,
+				      large_arc, sweep,
+				      end);
 		}
+
+		cursor = points.back();
 
 		break;
 

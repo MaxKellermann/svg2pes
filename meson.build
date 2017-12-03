@@ -40,6 +40,7 @@ executable(
   'src/Main.cxx',
   'src/ExpatParser.cxx',
   'src/SvgParser.cxx',
+  'src/SvgArc.cxx',
   'src/PesWriter.cxx',
   include_directories: inc,
   dependencies: [

@@ -21,6 +21,8 @@
 
 #include <vector>
 
+#include <math.h>
+
 struct SvgPoint {
 	double x, y;
 
@@ -36,10 +38,34 @@ struct SvgPoint {
 		return {x - other.x, y - other.y};
 	}
 
+	constexpr SvgPoint operator*(double factor) const {
+		return {x * factor, y * factor};
+	}
+
 	SvgPoint &operator+=(SvgPoint other) {
 		x += other.x;
 		y += other.y;
 		return *this;
+	}
+
+	SvgPoint &operator-=(SvgPoint other) {
+		x -= other.x;
+		y -= other.y;
+		return *this;
+	}
+
+	SvgPoint &operator*=(double factor) {
+		x *= factor;
+		y *= factor;
+		return *this;
+	}
+
+	constexpr double SquareMagnitude() const noexcept {
+		return x * x + y * y;
+	}
+
+	double Atan() const noexcept {
+		return atan2(y, x);
 	}
 };
 
