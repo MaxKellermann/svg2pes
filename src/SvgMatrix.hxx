@@ -29,7 +29,7 @@ struct SvgMatrix {
 
 		for (unsigned x = 0; x < 3; ++x) {
 			for (unsigned y = 0; y < 3; ++y) {
-				unsigned sum = 0;
+				double sum = 0;
 				for (unsigned i = 0; i < 3; ++i)
 					sum += values[y][i] * other.values[i][x];
 				result.values[y][x] = sum;
