@@ -38,10 +38,12 @@ PesColorChange(uint8_t *p, unsigned color)
  * A "big" stitch in the range (-2048..2047).
  */
 static inline uint8_t *
-PesBigStitch(uint8_t *p, int length)
+PesBigStitch(uint8_t *p, int x, int y)
 {
-	*p++ = 0x80 | ((length >> 8) & 0xf);
-	*p++ = length & 0xff;
+	*p++ = 0x80 | ((x >> 8) & 0xf);
+	*p++ = x & 0xff;
+	*p++ = 0x80 | ((y >> 8) & 0xf);
+	*p++ = y & 0xff;
 	return p;
 }
 
@@ -74,8 +76,8 @@ public:
 		GenerateWrite(PesColorChange, color);
 	}
 
-	void BigStitch(int length) {
-		GenerateWrite(PesBigStitch, length);
+	void BigStitch(int x, int y) {
+		GenerateWrite(PesBigStitch, x, y);
 	}
 
 	void Stitch(int x, int y) {
@@ -83,8 +85,7 @@ public:
 			//Regular stitch
 			GenerateWrite(PesSmallStitch, x, y);
 		} else {
-			BigStitch(x);
-			BigStitch(y);
+			BigStitch(x, y);
 		}
 	}
 
