@@ -73,7 +73,7 @@
 #  endif
 #elif defined(__GNUC__)
 #  if GCC_OLDER_THAN(4,9)
-#    error Sorry, your gcc version is too old.  You need at least version 4.6.
+#    error Sorry, your gcc version is too old.  You need at least version 4.9.
 #  endif
 #else
 #  warning Untested compiler.  Use at your own risk!
