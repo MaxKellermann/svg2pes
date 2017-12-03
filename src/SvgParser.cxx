@@ -60,6 +60,35 @@ StringAfterPrefix(const char *s, const char *prefix)
 	return s;
 }
 
+static bool
+ParseFlag(const char *&d)
+{
+	bool value;
+
+	switch (*d) {
+	case '0':
+		value = false;
+		break;
+
+	case '1':
+		value = true;
+		break;
+
+	default:
+		throw std::runtime_error("Malformed flag");
+	}
+
+	++d;
+	if (*d != 0) {
+		if (*d != ' ' && *d != ',')
+			throw std::runtime_error("Malformed flag");
+
+		d = StripLeft(d);
+	}
+
+	return value;
+}
+
 static double
 ParseDouble(const char *&d)
 {
@@ -138,11 +167,32 @@ SvgPathParser::ParseVertex(SvgVertex::Type type, bool relative, const char *&d)
 		break;
 
 	case SvgVertex::Type::ARC:
-		ParsePoint(cursor, relative, d);
-		ParseDouble(d);
-		ParseDouble(d);
-		ParseDouble(d);
-		ParsePoint(cursor, relative, d);
+		{
+			SvgPoint radius = ParsePoint({}, false, d);
+			if (*d == ',')
+				d = StripLeft(d + 1);
+
+			double rotation = ParseDouble(d);
+			if (*d == ',')
+				d = StripLeft(d + 1);
+
+			bool large_arc = ParseFlag(d);
+			if (*d == ',')
+				d = StripLeft(d + 1);
+
+			bool sweep = ParseFlag(d);
+			if (*d == ',')
+				d = StripLeft(d + 1);
+
+			SvgPoint end = ParsePoint(cursor, relative, d);
+
+			(void)radius;
+			(void)rotation;
+			(void)large_arc;
+			(void)sweep;
+			points.emplace_back(type, end);
+		}
+
 		break;
 
 	case SvgVertex::Type::QUADRATIC_CURVE:
