@@ -24,7 +24,7 @@
 struct SvgMatrix {
 	double values[3][3] = {{1,0,0},{0,1,0},{0,0,1}};
 
-	SvgMatrix operator*(SvgMatrix other) const {
+	SvgMatrix operator*(SvgMatrix other) const noexcept {
 		SvgMatrix result;
 
 		for (unsigned x = 0; x < 3; ++x) {
@@ -39,15 +39,15 @@ struct SvgMatrix {
 		return result;
 	}
 
-	SvgMatrix &operator*=(SvgMatrix other) {
+	SvgMatrix &operator*=(SvgMatrix other) noexcept {
 		return *this = (*this * other);
 	}
 
-	SvgPoint operator*(SvgPoint p) {
-		SvgPoint result;
-		result.x = values[0][0] * p.x + values[0][1] * p.y + values[0][2];
-		result.y = values[1][0] * p.x + values[1][1] * p.y + values[1][2];
-		return result;
+	constexpr SvgPoint operator*(SvgPoint p) const noexcept {
+		return {
+			values[0][0] * p.x + values[0][1] * p.y + values[0][2],
+			values[1][0] * p.x + values[1][1] * p.y + values[1][2],
+		};
 	}
 };
 
