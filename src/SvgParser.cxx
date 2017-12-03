@@ -18,6 +18,7 @@
 
 #include "SvgParser.hxx"
 #include "SvgData.hxx"
+#include "SvgMatrix.hxx"
 
 #include <stdexcept>
 
@@ -360,36 +361,6 @@ SvgParser::StartElement(const XML_Char *name, const XML_Char **atts)
 		ParseRect(x, y, width, height);
 	}
 }
-
-struct SvgMatrix {
-	double values[3][3] = {{1,0,0},{0,1,0},{0,0,1}};
-
-	SvgMatrix operator*(SvgMatrix other) {
-		SvgMatrix result;
-
-		for (unsigned x = 0; x < 3; ++x) {
-			for (unsigned y = 0; y < 3; ++y) {
-				unsigned sum = 0;
-				for (unsigned i = 0; i < 3; ++i)
-					sum += values[y][i] * other.values[i][x];
-				result.values[y][x] = sum;
-			}
-		}
-
-		return *this;
-	}
-
-	SvgMatrix &operator*=(SvgMatrix other) {
-		return *this = (*this * other);
-	}
-
-	SvgPoint operator*(SvgPoint p) {
-		SvgPoint result;
-		result.x = values[0][0] * p.x + values[0][1] * p.y + values[0][2];
-		result.y = values[1][0] * p.x + values[1][1] * p.y + values[1][2];
-		return result;
-	}
-};
 
 class SvgTransform {
 	SvgMatrix matrix;
