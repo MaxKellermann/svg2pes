@@ -17,11 +17,15 @@
  */
 
 #include "SvgParser.hxx"
+#include "SvgData.hxx"
 
 #include <stdexcept>
 
 #include <assert.h>
 #include <string.h>
+
+SvgParser::SvgParser() = default;
+SvgParser::~SvgParser() noexcept = default;
 
 static const char *
 FindAttribute(const XML_Char **atts, const char *name)

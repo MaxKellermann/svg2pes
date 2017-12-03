@@ -1,0 +1,66 @@
+/*
+ * Copyright (C) 2016 Max Kellermann <max.kellermann@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
+#ifndef SVG_DATA_HXX
+#define SVG_DATA_HXX
+
+#include <vector>
+
+struct SvgPoint {
+	double x, y;
+
+	SvgPoint() = default;
+	constexpr SvgPoint(double _x, double _y)
+		:x(_x), y(_y) {}
+
+	constexpr SvgPoint operator+(SvgPoint other) const {
+		return {x + other.x, y + other.y};
+	}
+
+	constexpr SvgPoint operator-(SvgPoint other) const {
+		return {x - other.x, y - other.y};
+	}
+
+	SvgPoint &operator+=(SvgPoint other) {
+		x += other.x;
+		y += other.y;
+		return *this;
+	}
+};
+
+struct SvgVertex : SvgPoint {
+	enum class Type {
+		MOVE,
+		LINE,
+		ARC,
+		QUADRATIC_CURVE,
+		CUBIC_CURVE,
+		SMOOTH_QUADRATIC_CURVE,
+		SMOOTH_CUBIC_CURVE,
+	} type;
+
+	constexpr SvgVertex(Type _type, SvgPoint _p):SvgPoint(_p), type(_type) {}
+
+	constexpr SvgVertex(Type _type, double _x, double _y):SvgPoint(_x, _y), type(_type) {}
+};
+
+struct SvgPath {
+	std::vector<SvgVertex> points;
+};
+
+#endif

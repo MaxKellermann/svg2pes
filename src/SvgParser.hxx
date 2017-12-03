@@ -22,49 +22,8 @@
 #include "ExpatParser.hxx"
 
 #include <forward_list>
-#include <vector>
 
-struct SvgPoint {
-	double x, y;
-
-	SvgPoint() = default;
-	constexpr SvgPoint(double _x, double _y)
-		:x(_x), y(_y) {}
-
-	constexpr SvgPoint operator+(SvgPoint other) const {
-		return {x + other.x, y + other.y};
-	}
-
-	constexpr SvgPoint operator-(SvgPoint other) const {
-		return {x - other.x, y - other.y};
-	}
-
-	SvgPoint &operator+=(SvgPoint other) {
-		x += other.x;
-		y += other.y;
-		return *this;
-	}
-};
-
-struct SvgVertex : SvgPoint {
-	enum class Type {
-		MOVE,
-		LINE,
-		ARC,
-		QUADRATIC_CURVE,
-		CUBIC_CURVE,
-		SMOOTH_QUADRATIC_CURVE,
-		SMOOTH_CUBIC_CURVE,
-	} type;
-
-	constexpr SvgVertex(Type _type, SvgPoint _p):SvgPoint(_p), type(_type) {}
-
-	constexpr SvgVertex(Type _type, double _x, double _y):SvgPoint(_x, _y), type(_type) {}
-};
-
-struct SvgPath {
-	std::vector<SvgVertex> points;
-};
+struct SvgPath;
 
 class SvgParser final : public CommonExpatParser {
 	typedef std::forward_list<SvgPath> PathList;
@@ -81,6 +40,9 @@ class SvgParser final : public CommonExpatParser {
 	std::forward_list<Group> groups;
 
 public:
+	SvgParser();
+	~SvgParser() noexcept;
+
 	const PathList &GetPaths() const {
 		return paths;
 	}

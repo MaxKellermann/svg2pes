@@ -17,6 +17,7 @@
  */
 
 #include "SvgParser.hxx"
+#include "SvgData.hxx"
 #include "PesWriter.hxx"
 #include "util/SystemError.hxx"
 #include "util/ScopeExit.hxx"
