@@ -128,8 +128,7 @@ SvgToPes(PesWriter &pes, const SvgParser &svg)
 			auto relative = point - cursor;
 			auto deltax = relative.x;
 			auto deltay = relative.y;
-			while(!(deltax>-2048 && deltax<2048
-				&& deltay>-2048 && deltay<2048)) {
+			while (!PesCheckBigStitch(deltax, deltay)) {
 				if(deltax<-2048) {pes.Stitch(-2048,0);deltax+=2048;cursor += PesPoint(-2048,0);}
 				if(deltax>2047) {pes.Stitch(2047,0);deltax-=2047;cursor += PesPoint(2047,0);}
 				if(deltay<-2048) {pes.Stitch(0,-2048);deltay+=2048;cursor += PesPoint(0,-2048);}

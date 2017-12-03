@@ -46,6 +46,18 @@ PesCheckSmallStitch(int x, int y)
 	return PesCheckSmallStitch(x) && PesCheckSmallStitch(y);
 }
 
+inline constexpr bool
+PesCheckBigStitch(int delta)
+{
+	return delta >= -2048 && delta <= 2048;
+}
+
+inline constexpr bool
+PesCheckBigStitch(int x, int y)
+{
+	return PesCheckBigStitch(x) && PesCheckBigStitch(y);
+}
+
 /**
  * A "big" stitch in the range (-2048..2047).
  */
