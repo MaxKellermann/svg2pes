@@ -131,8 +131,11 @@ SvgToPes(PesWriter &pes, const SvgParser &svg)
 			auto relative = point - cursor;
 			cursor = point;
 
-			if (first) {
-				first = false;
+			bool move = first ||
+				svg_point.type == SvgVertex::Type::MOVE;
+			first = false;
+
+			if (move) {
 				pes.Jump(relative.x, relative.y);
 			} else
 				pes.StitchLine(relative.x, relative.y);
