@@ -24,7 +24,7 @@
 struct SvgMatrix {
 	double values[3][3] = {{1,0,0},{0,1,0},{0,0,1}};
 
-	SvgMatrix operator*(SvgMatrix other) {
+	SvgMatrix operator*(SvgMatrix other) const {
 		SvgMatrix result;
 
 		for (unsigned x = 0; x < 3; ++x) {
@@ -36,7 +36,7 @@ struct SvgMatrix {
 			}
 		}
 
-		return *this;
+		return result;
 	}
 
 	SvgMatrix &operator*=(SvgMatrix other) {
