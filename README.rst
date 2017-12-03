@@ -20,18 +20,17 @@ Building svg2pes
 You need:
 
 - a C++14 compiler (GCC 5+ or clang)
-- expat (``libexpat1-dev`` on Debian)
+- expat (`libexpat1-dev` on Debian)
+- `Meson 0.37 <http://mesonbuild.com/>`__ and `Ninja <https://ninja-build.org/>`__
 
-Quick walkthrough::
+Run Meson::
 
-    ./autogen.sh
-    ./configure
-    make
-    make install
+ meson . output
 
-This project uses
-`autotools <https://en.wikipedia.org/wiki/GNU_build_system>`__.  If you
-know autotools, you know how to tweak the build process.
+Compile and install::
+
+ ninja -C output
+ ninja -C output install
 
 
 Using svg2pes
