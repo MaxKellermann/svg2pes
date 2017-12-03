@@ -123,11 +123,18 @@ SvgToPes(PesWriter &pes, const SvgParser &svg)
 
 	for (const auto &path : svg.GetPaths()) {
 		//pes.ColorChange(0);
+
+		bool first = true;
 		for (const auto &svg_point : path.points) {
 			const PesPoint point(svg_point);
 			auto relative = point - cursor;
 			cursor = point;
-			pes.StitchLine(relative.x, relative.y);
+
+			if (first) {
+				first = false;
+				pes.Jump(relative.x, relative.y);
+			} else
+				pes.StitchLine(relative.x, relative.y);
 		}
 	}
 }
