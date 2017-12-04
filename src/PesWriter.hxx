@@ -159,7 +159,7 @@ public:
 	}
 
 	void Jump(int x, int y) {
-		while (x != 0 && y != 0) {
+		while (x != 0 || y != 0) {
 			int step_x = std::max(-2048, std::min(2047, x));
 			int step_y = std::max(-2048, std::min(2047, y));
 			JumpStitch(step_x, step_y);
