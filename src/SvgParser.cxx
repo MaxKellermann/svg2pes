@@ -20,6 +20,7 @@
 #include "SvgData.hxx"
 #include "SvgMatrix.hxx"
 #include "SvgArc.hxx"
+#include "CssColor.hxx"
 
 #include <stdexcept>
 
@@ -398,12 +399,22 @@ SvgParser::ApplyPathAttributes(SvgPath &path, const XML_Char **atts)
 {
 	const char *stroke = FindAttribute(atts, "stroke");
 	if (stroke != nullptr) {
-		path.stroke = stroke;
+		try {
+			path.stroke_color = ParseCssColor(stroke);
+			path.stroke = true;
+		} catch (...) {
+			fprintf(stderr, "Failed to parse color '%s'\n", stroke);
+		}
 	}
 
 	const char *fill = FindAttribute(atts, "fill");
 	if (fill != nullptr) {
-		path.fill = fill;
+		try {
+			path.fill_color = ParseCssColor(fill);
+			path.fill = true;
+		} catch (...) {
+			fprintf(stderr, "Failed to parse color '%s'\n", fill);
+		}
 	}
 }
 

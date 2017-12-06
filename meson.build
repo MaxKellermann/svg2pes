@@ -41,6 +41,7 @@ executable(
   'src/ExpatParser.cxx',
   'src/SvgParser.cxx',
   'src/SvgArc.cxx',
+  'src/CssColor.cxx',
   'src/PesWriter.cxx',
   include_directories: inc,
   dependencies: [

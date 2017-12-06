@@ -19,8 +19,9 @@
 #ifndef SVG_DATA_HXX
 #define SVG_DATA_HXX
 
+#include "Color.hxx"
+
 #include <vector>
-#include <string>
 
 #include <math.h>
 
@@ -89,7 +90,9 @@ struct SvgVertex : SvgPoint {
 struct SvgPath {
 	std::vector<SvgVertex> points;
 
-	std::string stroke, fill;
+	Color fill_color, stroke_color;
+
+	bool fill = false, stroke = false;
 };
 
 #endif
