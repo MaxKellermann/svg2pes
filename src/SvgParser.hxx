@@ -51,9 +51,9 @@ private:
 	void BeginTransform(const char *transform);
 	void EndTransform();
 
-	void ParsePath(const char *d);
-	void ParseRect(const char *x, const char *y,
-		       const char *width, const char *height);
+	PathList::iterator ParsePath(const char *d);
+	PathList::iterator ParseRect(const char *x, const char *y,
+				     const char *width, const char *height);
 
 protected:
 	void StartElement(const XML_Char *name,

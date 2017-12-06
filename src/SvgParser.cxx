@@ -359,27 +359,28 @@ SvgPathParser::Parse(const char *d)
 	}
 }
 
-inline void
+inline SvgParser::PathList::iterator
 SvgParser::ParsePath(const char *d)
 {
 	SvgPathParser pp;
 	pp.Parse(d);
 	paths.emplace_front(std::move(pp));
+	return paths.begin();
 }
 
-inline void
+inline SvgParser::PathList::iterator
 SvgParser::ParseRect(const char *_x, const char *_y,
 		     const char *_width, const char *_height)
 {
 	if (_width == nullptr && _height == nullptr)
-		return;
+		return paths.end();
 
 	double x = _x != nullptr ? strtod(_x, nullptr) : 0;
 	double y = _y != nullptr ? strtod(_y, nullptr) : 0;
 	double width = strtod(_width, nullptr);
 	double height = strtod(_height, nullptr);
 	if (width <= 0 || height <= 0)
-		return;
+		return paths.end();
 
 	paths.emplace_front();
 	auto &points = paths.front().points;
@@ -389,6 +390,7 @@ SvgParser::ParseRect(const char *_x, const char *_y,
 	points.emplace_back(SvgVertex::Type::LINE, x + width, y + height);
 	points.emplace_back(SvgVertex::Type::LINE, x, y + height);
 	points.emplace_back(SvgVertex::Type::LINE, x, y);
+	return paths.begin();
 }
 
 void
