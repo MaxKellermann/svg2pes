@@ -72,6 +72,7 @@ PesWriter::PesWriter(ConstBuffer<uint8_t> colors)
 	PecHeader pec_header(200, 100);
 
 	assert(colors.size <= pec_header.colors.size());
+	pec_header.n_colors = colors.size;
 	std::copy_n(colors.data, colors.size, pec_header.colors.begin());
 
 	p = buffer.PrepareWrite(sizeof(pec_header));
