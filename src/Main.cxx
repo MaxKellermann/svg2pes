@@ -118,6 +118,26 @@ private:
 };
 
 static void
+SvgToPes(PesWriter &pes, PesPoint &cursor, const SvgPath &path)
+{
+	bool first = true;
+	for (const auto &svg_point : path.points) {
+		const PesPoint point(svg_point);
+		auto relative = point - cursor;
+		cursor = point;
+
+		bool move = first ||
+			svg_point.type == SvgVertex::Type::MOVE;
+		first = false;
+
+		if (move) {
+			pes.Jump(relative.x, relative.y);
+		} else
+			pes.StitchLine(relative.x, relative.y);
+	}
+}
+
+static void
 SvgToPes(PesWriter &pes, const SvgParser &svg)
 {
 	PesPoint cursor(0, 0);
@@ -125,21 +145,7 @@ SvgToPes(PesWriter &pes, const SvgParser &svg)
 	for (const auto &path : svg.GetPaths()) {
 		//pes.ColorChange(0);
 
-		bool first = true;
-		for (const auto &svg_point : path.points) {
-			const PesPoint point(svg_point);
-			auto relative = point - cursor;
-			cursor = point;
-
-			bool move = first ||
-				svg_point.type == SvgVertex::Type::MOVE;
-			first = false;
-
-			if (move) {
-				pes.Jump(relative.x, relative.y);
-			} else
-				pes.StitchLine(relative.x, relative.y);
-		}
+		SvgToPes(pes, cursor, path);
 	}
 }
 
