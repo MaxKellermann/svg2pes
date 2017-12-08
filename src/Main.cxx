@@ -167,8 +167,6 @@ try {
 	const auto in_path = argv[1];
 	const auto out_path = argv[2];
 
-	(void)out_path;
-
 	SvgParser parser;
 	FeedFile(parser, in_path);
 
