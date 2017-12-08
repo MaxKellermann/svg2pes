@@ -20,6 +20,7 @@
 #define SVG_DATA_HXX
 
 #include <vector>
+#include <string>
 
 #include <math.h>
 
@@ -87,6 +88,8 @@ struct SvgVertex : SvgPoint {
 
 struct SvgPath {
 	std::vector<SvgVertex> points;
+
+	std::string stroke, fill;
 };
 
 #endif

@@ -394,6 +394,20 @@ SvgParser::ParseRect(const char *_x, const char *_y,
 }
 
 void
+SvgParser::ApplyPathAttributes(SvgPath &path, const XML_Char **atts)
+{
+	const char *stroke = FindAttribute(atts, "stroke");
+	if (stroke != nullptr) {
+		path.stroke = stroke;
+	}
+
+	const char *fill = FindAttribute(atts, "fill");
+	if (fill != nullptr) {
+		path.fill = fill;
+	}
+}
+
+void
 SvgParser::StartElement(const XML_Char *name, const XML_Char **atts)
 {
 	const char *transform = FindAttribute(atts, "transform");
@@ -402,17 +416,21 @@ SvgParser::StartElement(const XML_Char *name, const XML_Char **atts)
 
 	groups.emplace_front(transform, paths.begin());
 
+	auto path = paths.end();
 	if (strcmp(name, "path") == 0) {
 		const char *d = FindAttribute(atts, "d");
 		if (d != nullptr)
-			ParsePath(d);
+			path = ParsePath(d);
 	} else if (strcmp(name, "rect") == 0) {
 		const char *x = FindAttribute(atts, "x");
 		const char *y = FindAttribute(atts, "y");
 		const char *width = FindAttribute(atts, "width");
 		const char *height = FindAttribute(atts, "height");
-		ParseRect(x, y, width, height);
+		path = ParseRect(x, y, width, height);
 	}
+
+	if (path != paths.end())
+		ApplyPathAttributes(*path, atts);
 }
 
 class SvgTransform {

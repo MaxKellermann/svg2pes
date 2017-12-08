@@ -55,6 +55,8 @@ private:
 	PathList::iterator ParseRect(const char *x, const char *y,
 				     const char *width, const char *height);
 
+	void ApplyPathAttributes(SvgPath &path, const XML_Char **atts);
+
 protected:
 	void StartElement(const XML_Char *name,
 			  const XML_Char **atts) override;
