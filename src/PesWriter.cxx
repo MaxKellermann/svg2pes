@@ -61,7 +61,7 @@ struct PecHeader {
 
 static_assert(sizeof(PecHeader) == 532, "Wrong PEC header size");
 
-PesWriter::PesWriter()
+PesWriter::PesWriter(ConstBuffer<uint8_t> colors)
 {
 	PesHeader header;
 
@@ -70,6 +70,10 @@ PesWriter::PesWriter()
 	buffer.CommitWrite(sizeof(header));
 
 	PecHeader pec_header(200, 100);
+
+	assert(colors.size <= pec_header.colors.size());
+	std::copy_n(colors.data, colors.size, pec_header.colors.begin());
+
 	p = buffer.PrepareWrite(sizeof(pec_header));
 	memcpy(p, &pec_header, sizeof(pec_header));
 	buffer.CommitWrite(sizeof(pec_header));

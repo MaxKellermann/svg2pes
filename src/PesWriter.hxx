@@ -100,7 +100,7 @@ class PesWriter {
 	GrowingBuffer<uint8_t> buffer;
 
 public:
-	PesWriter();
+	explicit PesWriter(ConstBuffer<uint8_t> colors);
 
 	void ColorChange(unsigned color) {
 		GenerateWrite(PesColorChange, color);

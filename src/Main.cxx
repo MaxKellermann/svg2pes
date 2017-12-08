@@ -159,7 +159,7 @@ try {
 	SvgParser parser;
 	FeedFile(parser, in_path);
 
-	PesWriter writer;
+	PesWriter writer(nullptr);
 	SvgToPes(writer, parser);
 	WriteFile(out_path, writer.Finish());
 
