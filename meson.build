@@ -50,3 +50,12 @@ executable(
   ],
   install: true,
 )
+
+executable(
+  'pesdump',
+  'src/Dump.cxx',
+  include_directories: inc,
+  dependencies: [
+  ],
+  install: true,
+)
