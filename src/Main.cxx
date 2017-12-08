@@ -19,10 +19,12 @@
 #include "SvgParser.hxx"
 #include "SvgData.hxx"
 #include "PesWriter.hxx"
+#include "PesColor.hxx"
 #include "util/SystemError.hxx"
 #include "util/ScopeExit.hxx"
 
 #include <stdexcept>
+#include <map>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -138,14 +140,19 @@ SvgToPes(PesWriter &pes, PesPoint &cursor, const SvgPath &path)
 }
 
 static void
-SvgToPes(PesWriter &pes, const SvgParser &svg)
+SvgToPes(PesWriter &pes, const std::multimap<unsigned, const SvgPath &> &paths)
 {
 	PesPoint cursor(0, 0);
 
-	for (const auto &path : svg.GetPaths()) {
-		//pes.ColorChange(0);
+	unsigned last_color = 0;
+	unsigned next_color_index = 0;
+	for (const auto &i : paths) {
+		if (i.first != last_color) {
+			last_color = i.first;
+			pes.ColorChange(next_color_index++);
+		}
 
-		SvgToPes(pes, cursor, path);
+		SvgToPes(pes, cursor, i.second);
 	}
 }
 
@@ -165,8 +172,30 @@ try {
 	SvgParser parser;
 	FeedFile(parser, in_path);
 
-	PesWriter writer(nullptr);
-	SvgToPes(writer, parser);
+	std::multimap<unsigned, const SvgPath &> paths;
+	for (const auto &path : parser.GetPaths()) {
+		Color rgb;
+		if (path.stroke)
+			rgb = path.stroke_color;
+		else if (path.fill)
+			rgb = path.fill_color;
+		else
+			continue;
+
+		unsigned color = NearestPesColor(rgb);
+		paths.emplace(color, path);
+	}
+
+	std::array<uint8_t, 256> colors;
+	unsigned n_colors = 0;
+	unsigned last_color = 0;
+
+	for (const auto &i : paths)
+		if (i.first != last_color)
+			colors[n_colors++] = last_color = i.first;
+
+	PesWriter writer({&colors.front(), n_colors});
+	SvgToPes(writer, paths);
 	WriteFile(out_path, writer.Finish());
 
 	return EXIT_SUCCESS;
