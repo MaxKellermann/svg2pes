@@ -43,6 +43,7 @@ executable(
   'src/SvgParser.cxx',
   'src/SvgArc.cxx',
   'src/CssColor.cxx',
+  'src/CssParser.cxx',
   'src/PesColor.cxx',
   'src/PesWriter.cxx',
   'src/util/StringUtil.cxx',

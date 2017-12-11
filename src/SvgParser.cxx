@@ -21,6 +21,7 @@
 #include "SvgMatrix.hxx"
 #include "SvgArc.hxx"
 #include "CssColor.hxx"
+#include "CssParser.hxx"
 #include "ExpatUtil.hxx"
 #include "util/StringUtil.hxx"
 
@@ -367,6 +368,26 @@ SvgParser::ParseRect(const char *_x, const char *_y,
 void
 SvgParser::ApplyPathAttributes(SvgPath &path, const XML_Char **atts)
 {
+	const char *style = FindXmlAttribute(atts, "style");
+	if (style != nullptr) {
+		try {
+			auto css = ParseCss(style);
+			auto i = css.find("stroke");
+			if (i != css.end()) {
+				path.stroke_color = ParseCssColor(i->second.c_str());
+				path.stroke = true;
+			}
+
+			i = css.find("fill");
+			if (i != css.end()) {
+				path.fill_color = ParseCssColor(i->second.c_str());
+				path.fill = true;
+			}
+		} catch (...) {
+			fprintf(stderr, "Failed to parse CSS '%s'\n", style);
+		}
+	}
+
 	const char *stroke = FindXmlAttribute(atts, "stroke");
 	if (stroke != nullptr) {
 		try {
