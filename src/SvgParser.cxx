@@ -382,6 +382,11 @@ namespace {
 void
 ApplyStroke(SvgPath &path, const char *stroke)
 {
+	if (strcmp(stroke, "none") == 0) {
+		path.stroke = false;
+		return;
+	}
+
 	path.stroke_color = ParseCssColor(stroke);
 	path.stroke = true;
 }
@@ -389,6 +394,11 @@ ApplyStroke(SvgPath &path, const char *stroke)
 void
 ApplyFill(SvgPath &path, const char *fill)
 {
+	if (strcmp(fill, "none") == 0) {
+		path.fill = false;
+		return;
+	}
+
 	path.fill_color = ParseCssColor(fill);
 	path.fill = true;
 }
