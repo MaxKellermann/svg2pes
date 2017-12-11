@@ -489,6 +489,22 @@ ParseTranslate(SvgMatrix &m, const char *p)
 	return p + 1;
 }
 
+static const char *
+ParseScale(SvgMatrix &m, const char *p)
+{
+	m.values[0][0] = m.values[1][1] = ParseDouble(p);
+	if (*p == ',')
+		++p;
+
+	if (*p != ')')
+		m.values[1][1] = ParseDouble(p);
+
+	if (*p != ')')
+		throw std::runtime_error("')' expected");
+
+	return p + 1;
+}
+
 inline void
 SvgTransform::Parse(const char *p)
 {
@@ -501,6 +517,10 @@ SvgTransform::Parse(const char *p)
 		} else if ((q = StringAfterPrefix(p, "translate(")) != nullptr) {
 			SvgMatrix m;
 			p = ParseTranslate(m, q);
+			matrix = m * matrix;
+		} else if ((q = StringAfterPrefix(p, "scale(")) != nullptr) {
+			SvgMatrix m;
+			p = ParseScale(m, q);
 			matrix = m * matrix;
 		} else {
 			throw std::runtime_error("Failed to parse transform");
