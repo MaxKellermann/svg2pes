@@ -377,6 +377,24 @@ SvgParser::ParseRect(const char *_x, const char *_y,
 	return paths.begin();
 }
 
+namespace {
+
+void
+ApplyStroke(SvgPath &path, const char *stroke)
+{
+	path.stroke_color = ParseCssColor(stroke);
+	path.stroke = true;
+}
+
+void
+ApplyFill(SvgPath &path, const char *fill)
+{
+	path.fill_color = ParseCssColor(fill);
+	path.fill = true;
+}
+
+} // anonymous namespace
+
 void
 SvgParser::ApplyPathAttributes(SvgPath &path, const XML_Char **atts)
 {
@@ -385,16 +403,12 @@ SvgParser::ApplyPathAttributes(SvgPath &path, const XML_Char **atts)
 		try {
 			auto css = ParseCss(style);
 			auto i = css.find("stroke");
-			if (i != css.end()) {
-				path.stroke_color = ParseCssColor(i->second.c_str());
-				path.stroke = true;
-			}
+			if (i != css.end())
+				ApplyStroke(path, i->second.c_str());
 
 			i = css.find("fill");
-			if (i != css.end()) {
-				path.fill_color = ParseCssColor(i->second.c_str());
-				path.fill = true;
-			}
+			if (i != css.end())
+				ApplyFill(path, i->second.c_str());
 		} catch (...) {
 			fprintf(stderr, "Failed to parse CSS '%s'\n", style);
 		}
@@ -403,8 +417,7 @@ SvgParser::ApplyPathAttributes(SvgPath &path, const XML_Char **atts)
 	const char *stroke = FindXmlAttribute(atts, "stroke");
 	if (stroke != nullptr) {
 		try {
-			path.stroke_color = ParseCssColor(stroke);
-			path.stroke = true;
+			ApplyStroke(path, stroke);
 		} catch (...) {
 			fprintf(stderr, "Failed to parse color '%s'\n", stroke);
 		}
@@ -413,8 +426,7 @@ SvgParser::ApplyPathAttributes(SvgPath &path, const XML_Char **atts)
 	const char *fill = FindXmlAttribute(atts, "fill");
 	if (fill != nullptr) {
 		try {
-			path.fill_color = ParseCssColor(fill);
-			path.fill = true;
+			ApplyFill(path, fill);
 		} catch (...) {
 			fprintf(stderr, "Failed to parse color '%s'\n", fill);
 		}
