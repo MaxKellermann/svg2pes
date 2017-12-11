@@ -39,6 +39,7 @@ executable(
   'svg2pes',
   'src/Main.cxx',
   'src/ExpatParser.cxx',
+  'src/ExpatUtil.cxx',
   'src/SvgParser.cxx',
   'src/SvgArc.cxx',
   'src/CssColor.cxx',

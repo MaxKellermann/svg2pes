@@ -21,6 +21,7 @@
 #include "SvgMatrix.hxx"
 #include "SvgArc.hxx"
 #include "CssColor.hxx"
+#include "ExpatUtil.hxx"
 
 #include <stdexcept>
 
@@ -29,16 +30,6 @@
 
 SvgParser::SvgParser() = default;
 SvgParser::~SvgParser() noexcept = default;
-
-static const char *
-FindAttribute(const XML_Char **atts, const char *name)
-{
-	for (; *atts != nullptr; atts += 2)
-		if (strcmp(atts[0], name) == 0)
-			return atts[1];
-
-	return nullptr;
-}
 
 static const char *
 StripLeft(const char *p)
@@ -397,7 +388,7 @@ SvgParser::ParseRect(const char *_x, const char *_y,
 void
 SvgParser::ApplyPathAttributes(SvgPath &path, const XML_Char **atts)
 {
-	const char *stroke = FindAttribute(atts, "stroke");
+	const char *stroke = FindXmlAttribute(atts, "stroke");
 	if (stroke != nullptr) {
 		try {
 			path.stroke_color = ParseCssColor(stroke);
@@ -407,7 +398,7 @@ SvgParser::ApplyPathAttributes(SvgPath &path, const XML_Char **atts)
 		}
 	}
 
-	const char *fill = FindAttribute(atts, "fill");
+	const char *fill = FindXmlAttribute(atts, "fill");
 	if (fill != nullptr) {
 		try {
 			path.fill_color = ParseCssColor(fill);
@@ -421,7 +412,7 @@ SvgParser::ApplyPathAttributes(SvgPath &path, const XML_Char **atts)
 void
 SvgParser::StartElement(const XML_Char *name, const XML_Char **atts)
 {
-	const char *transform = FindAttribute(atts, "transform");
+	const char *transform = FindXmlAttribute(atts, "transform");
 	if (transform == nullptr)
 		transform = "";
 
@@ -429,14 +420,14 @@ SvgParser::StartElement(const XML_Char *name, const XML_Char **atts)
 
 	auto path = paths.end();
 	if (strcmp(name, "path") == 0) {
-		const char *d = FindAttribute(atts, "d");
+		const char *d = FindXmlAttribute(atts, "d");
 		if (d != nullptr)
 			path = ParsePath(d);
 	} else if (strcmp(name, "rect") == 0) {
-		const char *x = FindAttribute(atts, "x");
-		const char *y = FindAttribute(atts, "y");
-		const char *width = FindAttribute(atts, "width");
-		const char *height = FindAttribute(atts, "height");
+		const char *x = FindXmlAttribute(atts, "x");
+		const char *y = FindXmlAttribute(atts, "y");
+		const char *width = FindXmlAttribute(atts, "width");
+		const char *height = FindXmlAttribute(atts, "height");
 		path = ParseRect(x, y, width, height);
 	}
 
