@@ -45,6 +45,7 @@ executable(
   'src/CssColor.cxx',
   'src/PesColor.cxx',
   'src/PesWriter.cxx',
+  'src/util/StringUtil.cxx',
   include_directories: inc,
   dependencies: [
     libexpat,

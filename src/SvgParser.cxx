@@ -22,6 +22,7 @@
 #include "SvgArc.hxx"
 #include "CssColor.hxx"
 #include "ExpatUtil.hxx"
+#include "util/StringUtil.hxx"
 
 #include <stdexcept>
 
@@ -30,28 +31,6 @@
 
 SvgParser::SvgParser() = default;
 SvgParser::~SvgParser() noexcept = default;
-
-static const char *
-StripLeft(const char *p)
-{
-	while (*p == ' ')
-		++p;
-	return p;
-}
-
-static const char *
-StringAfterPrefix(const char *s, const char *prefix)
-{
-	while (*prefix != 0) {
-		if (*s != *prefix)
-			return nullptr;
-
-		++s;
-		++prefix;
-	}
-
-	return s;
-}
 
 static bool
 ParseFlag(const char *&d)
