@@ -42,6 +42,7 @@ executable(
   'src/ExpatUtil.cxx',
   'src/SvgParser.cxx',
   'src/SvgArc.cxx',
+  'src/SvgBezier.cxx',
   'src/CssColor.cxx',
   'src/CssParser.cxx',
   'src/PesColor.cxx',

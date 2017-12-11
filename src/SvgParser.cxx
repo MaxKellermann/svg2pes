@@ -20,6 +20,7 @@
 #include "SvgData.hxx"
 #include "SvgMatrix.hxx"
 #include "SvgArc.hxx"
+#include "SvgBezier.hxx"
 #include "CssColor.hxx"
 #include "CssParser.hxx"
 #include "ExpatUtil.hxx"
@@ -169,15 +170,26 @@ SvgPathParser::ParseVertex(SvgVertex::Type type, bool relative, const char *&d)
 		break;
 
 	case SvgVertex::Type::QUADRATIC_CURVE:
-		ParsePoint(cursor, relative, d);
-		points.emplace_back(type, ParsePoint(cursor, relative, d));
+		{
+			const auto control = ParsePoint(cursor, relative, d);
+			const auto end = ParsePoint(cursor, relative, d);
+
+			SvgQuadraticBezierToLines(*this, cursor, control, end);
+		}
+
 		cursor = points.back();
 		break;
 
 	case SvgVertex::Type::CUBIC_CURVE:
-		ParsePoint(cursor, relative, d);
-		ParsePoint(cursor, relative, d);
-		points.emplace_back(type, ParsePoint(cursor, relative, d));
+		{
+			const auto control1 = ParsePoint(cursor, relative, d);
+			const auto control2 = ParsePoint(cursor, relative, d);
+			const auto end = ParsePoint(cursor, relative, d);
+
+			SvgCubicBezierToLines(*this, cursor,
+					      control1, control2, end);
+		}
+
 		cursor = points.back();
 		break;
 
