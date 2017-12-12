@@ -75,11 +75,6 @@ struct SvgVertex : SvgPoint {
 	enum class Type {
 		MOVE,
 		LINE,
-		ARC,
-		QUADRATIC_CURVE,
-		CUBIC_CURVE,
-		SMOOTH_QUADRATIC_CURVE,
-		SMOOTH_CUBIC_CURVE,
 	} type;
 
 	constexpr SvgVertex(Type _type, SvgPoint _p):SvgPoint(_p), type(_type) {}

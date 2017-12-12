@@ -121,26 +121,42 @@ ParseVertical(const SvgPoint cursor, bool relative, const char *&d)
 class SvgPathParser : public SvgPath {
 	SvgPoint cursor{0, 0};
 
+	enum class Type {
+		MOVE,
+		LINE,
+		ARC,
+		QUADRATIC_CURVE,
+		CUBIC_CURVE,
+		SMOOTH_QUADRATIC_CURVE,
+		SMOOTH_CUBIC_CURVE,
+	};
+
 public:
 	void Parse(const char *d);
 
 private:
-	void ParseVertex(SvgVertex::Type type, bool relative, const char *&d);
+	void ParseVertex(Type type, bool relative, const char *&d);
 };
 
 inline void
-SvgPathParser::ParseVertex(SvgVertex::Type type, bool relative, const char *&d)
+SvgPathParser::ParseVertex(Type type, bool relative, const char *&d)
 {
 	SvgPoint p;
 
 	switch (type) {
-	case SvgVertex::Type::MOVE:
-	case SvgVertex::Type::LINE:
-		points.emplace_back(type, ParsePoint(cursor, relative, d));
+	case Type::MOVE:
+		points.emplace_back(SvgVertex::Type::MOVE,
+				    ParsePoint(cursor, relative, d));
 		cursor = points.back();
 		break;
 
-	case SvgVertex::Type::ARC:
+	case Type::LINE:
+		points.emplace_back(SvgVertex::Type::LINE,
+				    ParsePoint(cursor, relative, d));
+		cursor = points.back();
+		break;
+
+	case Type::ARC:
 		{
 			SvgPoint radius = ParsePoint({}, false, d);
 			if (*d == ',')
@@ -169,7 +185,7 @@ SvgPathParser::ParseVertex(SvgVertex::Type type, bool relative, const char *&d)
 
 		break;
 
-	case SvgVertex::Type::QUADRATIC_CURVE:
+	case Type::QUADRATIC_CURVE:
 		{
 			const auto control = ParsePoint(cursor, relative, d);
 			const auto end = ParsePoint(cursor, relative, d);
@@ -180,7 +196,7 @@ SvgPathParser::ParseVertex(SvgVertex::Type type, bool relative, const char *&d)
 		cursor = points.back();
 		break;
 
-	case SvgVertex::Type::CUBIC_CURVE:
+	case Type::CUBIC_CURVE:
 		{
 			const auto control1 = ParsePoint(cursor, relative, d);
 			const auto control2 = ParsePoint(cursor, relative, d);
@@ -193,14 +209,18 @@ SvgPathParser::ParseVertex(SvgVertex::Type type, bool relative, const char *&d)
 		cursor = points.back();
 		break;
 
-	case SvgVertex::Type::SMOOTH_QUADRATIC_CURVE:
-		points.emplace_back(type, ParsePoint(cursor, relative, d));
+	case Type::SMOOTH_QUADRATIC_CURVE:
+		// TODO: implement
+		points.emplace_back(SvgVertex::Type::LINE,
+				    ParsePoint(cursor, relative, d));
 		cursor = points.back();
 		break;
 
-	case SvgVertex::Type::SMOOTH_CUBIC_CURVE:
+	case Type::SMOOTH_CUBIC_CURVE:
+		// TODO: implement
 		ParsePoint(cursor, relative, d);
-		points.emplace_back(type, ParsePoint(cursor, relative, d));
+		points.emplace_back(SvgVertex::Type::LINE,
+				    ParsePoint(cursor, relative, d));
 		cursor = points.back();
 		break;
 	}
@@ -209,92 +229,92 @@ SvgPathParser::ParseVertex(SvgVertex::Type type, bool relative, const char *&d)
 inline void
 SvgPathParser::Parse(const char *d)
 {
-	SvgVertex::Type type = SvgVertex::Type::MOVE;
+	Type type = Type::MOVE;
 	bool relative = false;
 	size_t sub_start = 0;
 
 	while (*(d = StripLeft(d)) != 0) {
 		switch (*d) {
 		case 'M':
-			type = SvgVertex::Type::MOVE;
+			type = Type::MOVE;
 			relative = false;
 			++d;
 			break;
 
 		case 'm':
-			type = SvgVertex::Type::MOVE;
+			type = Type::MOVE;
 			relative = true;
 			++d;
 			break;
 
 		case 'L':
-			type = SvgVertex::Type::LINE;
+			type = Type::LINE;
 			relative = false;
 			++d;
 			break;
 
 		case 'l':
-			type = SvgVertex::Type::LINE;
+			type = Type::LINE;
 			relative = true;
 			++d;
 			break;
 
 		case 'A':
-			type = SvgVertex::Type::ARC;
+			type = Type::ARC;
 			relative = false;
 			++d;
 			break;
 
 		case 'a':
-			type = SvgVertex::Type::ARC;
+			type = Type::ARC;
 			relative = true;
 			++d;
 			break;
 
 		case 'Q':
-			type = SvgVertex::Type::QUADRATIC_CURVE;
+			type = Type::QUADRATIC_CURVE;
 			relative = false;
 			++d;
 			break;
 
 		case 'q':
-			type = SvgVertex::Type::QUADRATIC_CURVE;
+			type = Type::QUADRATIC_CURVE;
 			relative = true;
 			++d;
 			break;
 
 		case 'C':
-			type = SvgVertex::Type::CUBIC_CURVE;
+			type = Type::CUBIC_CURVE;
 			relative = false;
 			++d;
 			break;
 
 		case 'c':
-			type = SvgVertex::Type::CUBIC_CURVE;
+			type = Type::CUBIC_CURVE;
 			relative = true;
 			++d;
 			break;
 
 		case 'T':
-			type = SvgVertex::Type::SMOOTH_QUADRATIC_CURVE;
+			type = Type::SMOOTH_QUADRATIC_CURVE;
 			relative = false;
 			++d;
 			break;
 
 		case 't':
-			type = SvgVertex::Type::SMOOTH_QUADRATIC_CURVE;
+			type = Type::SMOOTH_QUADRATIC_CURVE;
 			relative = true;
 			++d;
 			break;
 
 		case 'S':
-			type = SvgVertex::Type::SMOOTH_CUBIC_CURVE;
+			type = Type::SMOOTH_CUBIC_CURVE;
 			relative = false;
 			++d;
 			break;
 
 		case 's':
-			type = SvgVertex::Type::SMOOTH_CUBIC_CURVE;
+			type = Type::SMOOTH_CUBIC_CURVE;
 			relative = true;
 			++d;
 			break;
