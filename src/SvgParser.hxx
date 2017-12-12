@@ -54,6 +54,8 @@ private:
 	PathList::iterator ParsePath(const char *d);
 	PathList::iterator ParseRect(const char *x, const char *y,
 				     const char *width, const char *height);
+	PathList::iterator ParseCircle(const char *cx, const char *cy,
+				       const char *r);
 
 	void ApplyPathAttributes(SvgPath &path, const XML_Char **atts);
 

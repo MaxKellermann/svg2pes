@@ -30,6 +30,7 @@
 
 #include <assert.h>
 #include <string.h>
+#include <math.h>
 
 SvgParser::SvgParser() = default;
 SvgParser::~SvgParser() noexcept = default;
@@ -397,6 +398,33 @@ SvgParser::ParseRect(const char *_x, const char *_y,
 	return paths.begin();
 }
 
+inline SvgParser::PathList::iterator
+SvgParser::ParseCircle(const char *_cx, const char *_cy, const char *_r)
+{
+	if (_r == nullptr)
+		return paths.end();
+
+	double cx = _cx != nullptr ? strtod(_cx, nullptr) : 0;
+	double cy = _cy != nullptr ? strtod(_cy, nullptr) : 0;
+	double r = strtod(_r, nullptr);
+	if (r <= 0)
+		return paths.end();
+
+	paths.emplace_front();
+	auto &points = paths.front().points;
+	points.reserve(5);
+	points.emplace_back(SvgVertex::Type::MOVE, cx + r, cy);
+
+	for (double angle = 0.03; angle < 2 * M_PI; angle += 0.06)
+		points.emplace_back(SvgVertex::Type::LINE,
+				    cx + r * cos(angle),
+				    cy + r * sin(angle));
+
+	points.emplace_back(SvgVertex::Type::LINE, cx + r, cy);
+
+	return paths.begin();
+}
+
 namespace {
 
 void
@@ -483,6 +511,11 @@ SvgParser::StartElement(const XML_Char *name, const XML_Char **atts)
 		const char *width = FindXmlAttribute(atts, "width");
 		const char *height = FindXmlAttribute(atts, "height");
 		path = ParseRect(x, y, width, height);
+	} else if (strcmp(name, "circle") == 0) {
+		const char *cx = FindXmlAttribute(atts, "cx");
+		const char *cy = FindXmlAttribute(atts, "cy");
+		const char *r = FindXmlAttribute(atts, "r");
+		path = ParseCircle(cx, cy, r);
 	}
 
 	if (path != paths.end())
