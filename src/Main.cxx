@@ -96,7 +96,10 @@ struct PesPoint {
 	/**
 	 * Import from a SVG point, scaling to PES coordinates.
 	 */
-	constexpr PesPoint(SvgPoint src):x(FromSvg(src.x)), y(FromSvg(src.y)) {}
+#if defined(__GNUC__) && !defined(__clang__)
+	constexpr
+#endif
+	PesPoint(SvgPoint src):x(FromSvg(src.x)), y(FromSvg(src.y)) {}
 
 	constexpr PesPoint operator+(PesPoint other) const {
 		return {x + other.x, y + other.y};
@@ -113,7 +116,11 @@ struct PesPoint {
 	}
 
 private:
-	static constexpr int FromSvg(double value) {
+#if defined(__GNUC__) && !defined(__clang__)
+	/* lround() is a constexpr built-in in GCC */
+	constexpr
+#endif
+	static int FromSvg(double value) {
 		constexpr double SCALE = 25.4*10/90; //SVG 90DPI and PES 10 points per mm
 		return lround(value * SCALE);
 	}
