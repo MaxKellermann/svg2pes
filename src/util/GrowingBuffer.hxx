@@ -108,11 +108,11 @@ public:
 	}
 
 	iterator end() {
-		return std::next(begin(), size);
+		return std::next(begin(), the_size);
 	}
 
 	constexpr const_iterator end() const {
-		return std::next(begin(), size);
+		return std::next(begin(), the_size);
 	}
 
 	constexpr operator ConstBuffer<T>() const {
